@@ -1,7 +1,8 @@
+let squares = [];
+
+
 function create_squares() {
     const squareSize = 0.7;
-    const squares = [];
-    
     const squareGeometry = new THREE.PlaneGeometry(squareSize, squareSize);
     const squareMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
    
@@ -82,7 +83,6 @@ function rotate(){
 for (var s = 18; s <= 35; s++) {
     squaresArray[s].rotation.set(0, -Math.PI / 2, 0);
 }
-
 // Rotate squares from index 36 to 54
 for (var s = 36; s <= 54; s++) {
     squaresArray[s].rotation.set(-Math.PI / 2, 0, 0);
@@ -91,3 +91,13 @@ for (var s = 36; s <= 54; s++) {
 
 rotate();
 create_sqaure();
+
+
+
+// Change color of a specific square
+function changeSquareColor(squareIndex, newColor) {
+    squaresArray[squareIndex].material.color.set(newColor);
+}
+
+// Example: Change the color of square at index 10 to green (hex: 0x00ff00)
+changeSquareColor(9, 0x00ff00); // Remember, array indices start from 0, so square 10 has index 9.

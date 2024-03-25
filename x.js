@@ -12,6 +12,10 @@ let xMatchCount = 0;
 let oMatchCount = 0;
 let xMatchCountText;
 let oMatchCountText;
+let currentPlayer = 'X';
+let currentPosition=[];
+let winningTexts = [];
+let clickedPositions = new Set();
 
 const textpositions= [
     new THREE.Vector3(-0.94, -0.94, -1.2), // 1
@@ -74,9 +78,6 @@ const mouse = new THREE.Vector2();
 window.addEventListener('click', mouseclick, false);
 
 
-
-
-let clickedPositions = new Set();
 function mouseclick(event) {
 
     mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -97,7 +98,10 @@ function mouseclick(event) {
                     clickedPositions.add(i);
                     all_clicked_pos.push(i);
                     keyval(TextXO, all_clicked_pos,setsz);
-                    updateTextContent();                
+                    keyval(TextXO, all_clicked_pos,setsnz);
+                    console.log(addedtext)
+
+                 //   updateTextContent();                
                 }
                 break;
                
@@ -110,8 +114,6 @@ function mouseclick(event) {
     
 
 
-let currentPlayer = 'X';
-let currentPosition=[];
 
 function addXManually({ x, y, z }) {
     const currentPositionn= new THREE.Vector3(x, y, z);
@@ -189,7 +191,7 @@ function addText(position, textValue) {
             const textw = new THREE.Mesh(geometry, matLite);
             textw.rotation.set(0, -Math.PI / 2, 0);
             textw.position.copy(textpositions[intersectedIndex]);
-            textw.name=textValue;
+            textw.name=textValue+intersectedIndex;
             scene.add(textw);
             addedtext.push(textw)
           
@@ -198,7 +200,7 @@ function addText(position, textValue) {
         } else if (intersectedIndex >=36 && intersectedIndex <=53) {
             const textu = new THREE.Mesh(geometry, matLite);
             textu.rotation.set(Math.PI / 2, 0, 0);
-            textu.name=textValue;
+            textu.name=textValue+intersectedIndex;
             textu.position.copy(textpositions[intersectedIndex]);
             scene.add(textu);
             addedtext.push(textu);
@@ -209,10 +211,11 @@ function addText(position, textValue) {
         } else {
            
             const text = new THREE.Mesh(geometry, matLite);
-            text.name=textValue;
+            text.name=textValue+intersectedIndex;
             text.position.copy(textpositions[intersectedIndex]);
             scene.add(text);
             addedtext.push(text);
+
            
         }
     
@@ -225,6 +228,9 @@ function addText(position, textValue) {
 //currentpossible contains all positions and the last posiition all postition are accessable...
 //allclickedpos contains the number[location] of the clicked sqaure and clicked text,,,
 // divided aray consists of allclicked positions divided by 3!!!!
+
+
+//camera facing z dir
 let setsz = [
     [15,16,17],
     [12,13,14],
@@ -236,17 +242,20 @@ let setsz = [
     [17,13,9]
   ];
 
-
+//camera facing -z dir
   let setsnz = [
-    [15,16,17],
-    [12,13,14],
-    [9,10,11],
-    [15,12,9],
-    [16,13,10],
-    [17,14,11],
-    [15,13,11],
-    [17,13,9]
+    [8,5,2],
+    [7,4,1],
+    [6,3,0],
+    [8,7,6],
+    [5,4,3],
+    [2,1,0],
+    [8,4,0],
+    [6,4,2]
   ];
+
+
+
 
 function keyval(arr1, arr2, arr3) {
     let keyvalue = [];
@@ -285,15 +294,19 @@ function keyval(arr1, arr2, arr3) {
             
             if (foundMatch) {
                 matchCount++; 
+                const winningText = keyvalue.map(obj => obj[Object.keys(obj)[0]]).join('');
+                winningTexts.push({ text: winningText, value: keyvalue });
             }
         }
         
-        console.log("Total matching sets with setsz:", matchCount); 
+       // console.log("Total matching sets with setsz:", matchCount); 
         divideAndCheck(keyvalue, setsz);
-        console.log(keyvalue)
+        divideAndCheck(keyvalue, setsnz);
+      //  console.log(keyvalue)
     }
 }  
-   
+
+
 
 function divideAndCheck(keyvalue, arr3) {
     let xValues = [];
@@ -309,10 +322,10 @@ function divideAndCheck(keyvalue, arr3) {
         }
     });
 
-
     xMatchCount = 0;
     oMatchCount = 0;
 
+    const winningCombinations = []; // Array to store winning combinations
 
     for (let set of arr3) {
         let xMatch = set.every(pos => xValues.includes(pos));
@@ -328,10 +341,43 @@ function divideAndCheck(keyvalue, arr3) {
         }
     }
 
-    console.log("Total matching sets with setsz for X:", xMatchCount);
-    console.log("Total matching sets with setsz for O:", oMatchCount);
+    console.log("Total matching sets with sets for X:", xMatchCount);
+    console.log("Total matching sets with sets for O:", oMatchCount);
+
+    if (xMatchCount > 0 || oMatchCount > 0) {
+        const winningSquares = []; 
+
+        for (let set of arr3) {
+            let xMatch = set.every(pos => xValues.includes(pos));
+            let oMatch = set.every(pos => oValues.includes(pos));
+
+            if (xMatch || oMatch) {
+                winningSquares.push(...set);
+            }
+        }
+
+        // Push winning combinations with text names directly
+        for (let text of addedtext) {
+            const name = text.name;
+            for (let i = 0; i < winningTexts.length; i++) {
+                if (winningTexts[i].text === name) {
+                    winningCombinations.push({ text: name, value: keyvalue });
+                    break;
+                }
+            }
+        }
+
+        console.log("Winning combinations:", winningCombinations);
+    }
+
+    return winningCombinations; // Return the array of winning combinations
 }
 
+
+
+function getWinningTexts() {
+    return winningTexts;
+}
 
 
 let xTextMesh = null;
@@ -387,4 +433,7 @@ function updateTextContent() {
 
 let xMatchCountPosition = new THREE.Vector3(7, -4, -15);
 let oMatchCountPosition = new THREE.Vector3(7, -5.5, -15); 
+
+
+
 
