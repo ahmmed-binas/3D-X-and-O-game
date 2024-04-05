@@ -1,5 +1,72 @@
-const lineMaterial = new THREE.LineBasicMaterial({
-    color: '',
+ function hexToRgb(hex) {
+    return {
+        r: ((hex >> 16) & 255) / 255, 
+        g: ((hex >> 8) & 255) / 255, 
+        b: (hex & 255) / 255         
+    };
+}
+
+ const colorMap = {
+    "Celestial Crimson": [0x811453, 0xdd2f59, 0xffb98a],
+    "Starlight Silver": [0x414e6d, 0xaebdc7, 0xe9ecef],
+    "Galactic Teal": [0x034752, 0x0092a6, 0x23c5e0],
+    "Nebula Purple": [0x490092, 0x8700e8, 0xba80e8],
+    "Cosmic Blue": [0x00171f, 0x0a4f62, 0x00a4c4],
+    "original": [0xff0000, 0x00ff00, 0x0000ff]
+};
+
+let selectedColorPalette;
+let color; 
+
+function setColorFromPalette(){
+    const selectedPalette=document.getElementById('colorSelect');
+    if (!selectedPalette) {
+        console.error("No color palette selected.");
+        return;
+    }
+    const paletteName = selectedPalette.value;
+    if (!(paletteName in colorMap)) {
+        console.error("Invalid color palette name:", paletteName);
+        return;
+    }
+    if (paletteName !== selectedColorPalette) {
+        selectedColorPalette = paletteName;
+        const colorHex = colorMap[paletteName][1];
+        const rgb = hexToRgb(colorHex);
+        color = new THREE.Color(rgb.r, rgb.g, rgb.b);
+        lineMaterial.color.set(color);
+       
+    }
+}
+
+function applySettings() {
+    setColorFromPalette();
+    console.log("Settings applied.");
+}
+
+document.getElementById("applySettings").addEventListener("click", applySettings);
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Wait for the DOM content to be fully loaded
+    document.getElementById("applySettings").click(); // Programmatically trigger a click event on the button
+    console.log("Theme  Activated..................")
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+let lineMaterial = new THREE.LineBasicMaterial({
     linewidth: 10,
 });
 

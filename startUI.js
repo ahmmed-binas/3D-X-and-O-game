@@ -7,6 +7,8 @@ const windowGeometry = new THREE.BoxGeometry(5,5,0);
     windowMesh.position.set(0, 0, 2); 
     windowMesh.name='windowMeshstart';
     lay.push(windowMesh);
+
+
 //scene.add(windowMesh);
 //addTextToScene(scene, 'Play', new THREE.Vector3(-0.422, 0, 2), fontPath, 0xFF0000);
 //addTextToScene(scene, 'X', new THREE.Vector3(-0.7, 1.72 , 2 ), fontPath, false);
@@ -16,7 +18,7 @@ const windowGeometry = new THREE.BoxGeometry(5,5,0);
 
 
 
-function addTextToScene(scene, textValue, position, fontPath,col) {
+ function addTextToScene(scene, textValue, position, fontPath,col) {
        const loader = new THREE.FontLoader();
        loader.load(fontPath, function (loadedFont) {
            const matLite = new THREE.MeshBasicMaterial({
@@ -262,7 +264,6 @@ function breakMesh(mesh) {
 
 
 }
-
 
 
 

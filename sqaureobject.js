@@ -1,11 +1,73 @@
+let selectedColorPalette;
+let color; 
 let squares = [];
+
+let squareMaterial = new THREE.MeshBasicMaterial({  side: THREE.DoubleSide });
+
+  function hexToRgb(hex) {
+    return {
+        r: ((hex >> 16) & 255) / 255, 
+        g: ((hex >> 8) & 255) / 255, 
+        b: (hex & 255) / 255         
+    };
+}
+
+ const colorMap = {
+    "Celestial Crimson": [0x811453, 0xdd2f59, 0xffb98a],
+    "Starlight Silver": [0x414e6d, 0xaebdc7, 0xe9ecef],
+    "Galactic Teal": [0x034752, 0x0092a6, 0x23c5e0],
+    "Nebula Purple": [0x490092, 0x8700e8, 0xba80e8],
+    "Cosmic Blue": [0x00171f, 0x0a4f62, 0x00a4c4],
+    "original": [0xff0000, 0x00ff00, 0x0000ff]
+};
+
+
+
+function setColorFromPalette() {
+    const selectedPalette = document.getElementById('colorSelect');
+    if (!selectedPalette) {
+        console.error("No color palette selected.");
+        return;
+    }
+    const paletteName = selectedPalette.value;
+    if (!(paletteName in colorMap)) {
+        console.error("Invalid color palette name:", paletteName);
+        return;
+    }
+    if (paletteName !== selectedColorPalette) {
+        selectedColorPalette = paletteName;
+        const colorHex = colorMap[paletteName][0];
+        const rgb = hexToRgb(colorHex);
+        color = new THREE.Color(rgb.r, rgb.g, rgb.b);
+        squareMaterial.color.set(color);
+       
+    }
+}
+
+function applySettings() {
+    setColorFromPalette();
+    console.log("Settings applied.");
+}
+
+document.getElementById("applySettings").addEventListener("click", applySettings);
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    // Wait for the DOM content to be fully loaded
+    document.getElementById("applySettings").click(); // Programmatically trigger a click event on the button
+    console.log("Theme  Activated..................")
+});
+
 
 
 function create_squares() {
-    const squareSize = 0.7;
+    const squareSize = 0.7; 
     const squareGeometry = new THREE.PlaneGeometry(squareSize, squareSize);
-    const squareMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+ 
    
+
+
+    
     const squarePositions = [
         new THREE.Vector3(-0.76, -0.76, -1.16), // square1
         new THREE.Vector3(0, -0.76, -1.16),      // square2
@@ -62,42 +124,33 @@ function create_squares() {
         new THREE.Vector3(0, -1.16, 0.76),        // square53
         new THREE.Vector3(0.76, -1.16, 0.76)      // square54
     ];
-    
-    const squarenumb = squarePositions.length;
 
+    const squarenumb = squarePositions.length; // Get the total number of squares
     for (let i = 1; i <= squarenumb; i++) {
-        const square = new THREE.Mesh(squareGeometry, squareMaterial);
-        square.position.copy(squarePositions[i - 1]);
-        square.name = "square" + i;
-        cube.add(square);
+        const square = new THREE.Mesh(squareGeometry, squareMaterial); 
+        square.position.copy(squarePositions[i - 1]); // Set the position of the square
+        square.name = "square" + i; // Assign a name to the square
+        scene.add(square); 
         squares.push(square);
     }
-
-    return squares;
-    
+return squares; 
 }
 
 
-const squaresArray = create_squares();
-function rotate(){
-for (var s = 18; s <= 35; s++) {
-    squaresArray[s].rotation.set(0, -Math.PI / 2, 0);
-}
-// Rotate squares from index 36 to 54
-for (var s = 36; s <= 54; s++) {
-    squaresArray[s].rotation.set(-Math.PI / 2, 0, 0);
-}
-}
+ let squaresArray=create_squares();
 
 rotate();
-create_sqaure();
+
+
+function rotate(){
+    for (var s = 18; s <= 35; s++) {
+        squares[s].rotation.set(0, -Math.PI / 2, 0);
+    }
+
+    for (var s = 36; s <= 54; s++) {
+        squares[s].rotation.set(-Math.PI / 2, 0, 0);
+}}
 
 
 
-// Change color of a specific square
-function changeSquareColor(squareIndex, newColor) {
-    squaresArray[squareIndex].material.color.set(newColor);
-}
 
-// Example: Change the color of square at index 10 to green (hex: 0x00ff00)
-changeSquareColor(9, 0x00ff00); // Remember, array indices start from 0, so square 10 has index 9.
