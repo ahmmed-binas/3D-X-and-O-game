@@ -4,14 +4,21 @@ let all_clicked_pos=[];
 let TextXO=[]
 let addedtext=[]
 let contextMenuOccurred = false;
-let xMatchCount = 0;
-let oMatchCount = 0;
 let currentPlayer = 'X';
 let currentPosition=[];
 let clickedPositions = new Set();
 let winningCombinationsCopy=[];
 let prevXMatchCount = 0;
 let prevOMatchCount = 0;
+let xMatchCount = 0;
+let oMatchCount = 0;
+let scoresData = {
+    savedxScore: 0,
+    savedoScore: 0
+};
+
+
+
 
 /*
 const audioContext = new AudioContext();
@@ -143,7 +150,7 @@ function mouseclick(event) {
     
                 if (game && !clickedPositions.has(i)) {
                     addXManually(textpositions[i]);
-                   console.log(clickedPositions)
+                     console.log(clickedPositions)
                     clickedPositions.add(i);
                     all_clicked_pos.push(i);
                     keyval(TextXO, all_clicked_pos,setsz);
@@ -176,10 +183,9 @@ function addXManually({ x, y, z }) {
         currentPlayer=TextXO[TextXO.length-3]
     }
     addText(new THREE.Vector3(x, y, z), currentPlayer);
-  
     TextXO.push(currentPlayer);
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-   console.log(TextXO)
+    //console.log(TextXO)
 }
 
 
@@ -269,7 +275,7 @@ function addText(position, textValue) {
 
            
         }
-    
+    console.log(addedtext)
     });       
 }
 
@@ -399,7 +405,10 @@ function divideAndCheck(keyvalue, arr3) {
             oValues.push(position);
         }
     });
-   
+
+
+    
+
     xMatchCount = 0;
     oMatchCount = 0;
 
@@ -426,8 +435,11 @@ function divideAndCheck(keyvalue, arr3) {
 
     console.log("Total matching sets with sets for X:", xMatchCount);
     console.log("Total matching sets with sets for O:", oMatchCount);
-    updateScore(xMatchCount, oMatchCount);
+    updateScore((xMatchCount + scoresData.savedxScore), (oMatchCount + scoresData.savedoScore));
+
     winningCombinationsCopy = [...winningCombinations]; 
+    console.log(winningCombinationsCopy);
+  
 
     if (xMatchCount > prevXMatchCount || oMatchCount > prevOMatchCount) {
        setTimeout(()=>{ playSound(5);},200)
@@ -444,6 +456,28 @@ function divideAndCheck(keyvalue, arr3) {
 
 
 
+
+const xMatchCountPosition = new THREE.Vector3(1, -1, -8);
+const oMatchCountPosition = new THREE.Vector3(1, -1, -2);
+
+
+
+function updateTextContent(xMatchCount,oMatchCount) {
+    const xMatchCountText = "Points For X: " + (xMatchCount+ scoresData.savedxScore);
+    const oMatchCountText = "Points For O: " + (oMatchCount+ scoresData.savedoScore);
+
+    document.getElementById('x-match-count').textContent = xMatchCountText;
+    document.getElementById('o-match-count').textContent = oMatchCountText;
+
+ 
+    createText(xMatchCountPosition, xMatchCountText, true);
+    createText(oMatchCountPosition, oMatchCountText, false);
+}
+
+function updateScore(xScore, oScore) {
+    document.getElementById('x-match-count').textContent = "Points For X: " + xScore ;
+    document.getElementById('o-match-count').textContent = "Points For O: " + oScore ;
+}
 
 
 
@@ -464,30 +498,6 @@ function animateWinningText(winningCombinations) {
     });
    
 }
-
-
-
-const xMatchCountPosition = new THREE.Vector3(1, -1, -8);
-const oMatchCountPosition = new THREE.Vector3(1, -1, -2);
-
-function updateTextContent() {
-    const xMatchCountText = "Points For X: " + xMatchCount;
-    const oMatchCountText = "Points For O: " + oMatchCount;
-
-    document.getElementById('x-match-count').textContent = xMatchCountText;
-    document.getElementById('o-match-count').textContent = oMatchCountText;
-
- 
-    createText(xMatchCountPosition, xMatchCountText, true);
-    createText(oMatchCountPosition, oMatchCountText, false);
-}
-
-function updateScore(xScore, oScore) {
-
-    document.getElementById('x-match-count').textContent = "Points For X: " + xScore;
-    document.getElementById('o-match-count').textContent = "Points For O: " + oScore;
-}
-
 
 
 function createSkyStars() {
@@ -572,6 +582,144 @@ function animateFlicker(geometry, index) {
 }
 
 createSkyStars();
+
+
+
+
+/////local strorage????????????????/
+
+
+
+function saveAddedTextToLocalStorage() {
+    const addedTextData = addedtext.map(textObject => {
+        return {
+            position: textObject.position.toArray(),
+            rotation: textObject.rotation.toArray(),
+            name:textObject.name 
+        };
+    });
+
+    const winningCombinationsCopyString = winningCombinationsCopy.map(combination => combination.join(','));
+    
+    const dataToSave = {
+        addedTextData: addedTextData,
+        xPoints: xMatchCount,
+        oPoints: oMatchCount,
+        winningCombinationsCpy: winningCombinationsCopyString 
+    };
+
+    const dataString = JSON.stringify(dataToSave);
+    localStorage.setItem('gameData', dataString);
+    console.log("Game data saved to local storage.");
+}
+
+
+
+
+
+
+
+function addTextToScene(position, textValue, rotation, color = 0x006699, size = 0.38) {
+    const loader = new THREE.FontLoader();
+    loader.load('./helvetiker_bold.typeface.json', function (loadedFont) {
+        const matLite = new THREE.MeshBasicMaterial({
+            color: color, 
+            transparent: false,
+            opacity: 1,
+            side: THREE.DoubleSide
+        });
+
+        const geometry = new THREE.TextGeometry(textValue.charAt(0), { 
+            font: loadedFont,
+            size: size,
+            height: 0.1
+        });
+
+        const textMesh = new THREE.Mesh(geometry, matLite);
+        textMesh.position.copy(position);
+        textMesh.rotation.copy(rotation); 
+        textMesh.name = textValue; 
+
+        scene.add(textMesh);
+
+        const storedGameDataString = localStorage.getItem('gameData');
+        const storedGameData = JSON.parse(storedGameDataString);
+        if (storedGameData && storedGameData.winningCombinationsCpy) {
+            storedGameData.winningCombinationsCpy.forEach(combination => {
+                if (combination.includes(textValue)) {
+                    const darkRedColor = 0x8B0000;
+                    textMesh.material.color.setHex(darkRedColor);
+                }
+            });
+        } 
+    });
+}
+
+
+
+function retrieveAddedTextFromLocalStorage() {
+    const storedGameDataString = localStorage.getItem('gameData');
+    const storedGameData = JSON.parse(storedGameDataString);
+    if (storedGameData) {
+        scoresData.savedxScore = storedGameData.xPoints;
+        scoresData.savedoScore = storedGameData.oPoints;
+       updateScore(scoresData.savedxScore,scoresData.savedoScore);
+        const addedTextData = storedGameData.addedTextData;
+        addedTextData.forEach(textData => {
+            const position = new THREE.Vector3().fromArray(textData.position);
+            const rotation = new THREE.Euler().fromArray(textData.rotation); 
+            const textValue = textData.name;
+            addTextToScene(position, textValue, rotation, undefined, undefined, function(textMesh) {
+                console.log("Text added to scene:", textMesh.name);
+            }); 
+        });
+
+        console.log("Added text data retrieved from local storage and added to the scene.");
+    } else {
+        console.log("No game data found in local storage.");
+    }
+}
+
+
+console.log(scoresData)
+
+function saveScoresToLocalStorage() {
+    scoresData.savedxScore += xMatchCount;
+    scoresData.savedoScore += oMatchCount;
+    localStorage.setItem('scoresData', JSON.stringify(scoresData));
+    
+}
+
+
+
+window.addEventListener('load', function() {
+    retrieveAddedTextFromLocalStorage();
+
+});
+
+
+
+
+document.getElementById("saveSettings").addEventListener('click', function() {
+
+        saveAddedTextToLocalStorage();
+        saveScoresToLocalStorage();
+    
+   window.location.reload(); 
+});
+
+
+function deleteAllDataFromLocalStorage() {
+    localStorage.clear(); 
+    console.log("All data deleted from local storage.");
+
+}
+
+
+document.getElementById("deleteSettings").addEventListener('click', function() {
+    deleteAllDataFromLocalStorage();
+    window.location.reload(); 
+});
 
 
 
