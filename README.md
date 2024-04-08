@@ -49,5 +49,8 @@ Special thanks to:
 - The creators of Three.js for providing an exceptional library for 3D graphics in the browser.
 - The background music used in the game for adding an extra layer of enjoyment.
 
+## Conclusion
+The game is finally completed with all the updates and enhancements. It's now ready to be played and enjoyed! Thank you for checking it out.
+
 ## License
 This project is licensed under the [MIT License](LICENSE).
