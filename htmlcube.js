@@ -29,12 +29,13 @@ const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 scene.add(cube);
 
 // Ground
+
 const ground = Matter.Bodies.rectangle(9, -8, 800, 2, { isStatic: true });
 Matter.World.add(engine.world, [ground]);
 const matterGroundPosition = ground.position;
 const threeGround = new THREE.Mesh(
     new THREE.BoxGeometry(800, 2, 800),
-    new THREE.MeshBasicMaterial({ color: 0x808080, transparent: true, opacity: 0.8 })
+    new THREE.MeshBasicMaterial({ color:0x808080,transparent: true, opacity: 0.8 })
 );
 scene.add(threeGround);
 threeGround.position.set(matterGroundPosition.x, matterGroundPosition.y, matterGroundPosition.z);
@@ -59,3 +60,5 @@ function animate() {
 }
 
 animate();
+
+

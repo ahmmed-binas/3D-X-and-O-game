@@ -1,25 +1,25 @@
- function hexToRgb(hex) {
+let selectedColorPalette;
+let color;
+
+function hexToRgb(hex) {
     return {
-        r: ((hex >> 16) & 255) / 255, 
-        g: ((hex >> 8) & 255) / 255, 
-        b: (hex & 255) / 255         
+        r: ((hex >> 16) & 255) / 255,
+        g: ((hex >> 8) & 255) / 255,
+        b: (hex & 255) / 255
     };
 }
 
- const colorMap = {
-    "Celestial Crimson": [0x811453, 0xdd2f59, 0xffb98a],
-    "Starlight Silver": [0x414e6d, 0xaebdc7, 0xe9ecef],
-    "Galactic Teal": [0x034752, 0x0092a6, 0x23c5e0],
-    "Nebula Purple": [0x490092, 0x8700e8, 0xba80e8],
-    "Cosmic Blue": [0x00171f, 0x0a4f62, 0x00a4c4],
-    "original": [0xff0000, 0x00ff00, 0x0000ff]
+const colorMap = {
+    "Celestial Crimson": [0x811453, 0xbcd4e6, 0xfff5ee, 0x333333],
+    "Starlight Silver": [0x414e6d, 0x788995, 0xf5f5f5, 0x2c3e50],
+    "Galactic Teal": [0x034752, 0x3a5f6e, 0xe0f2f1, 0x1abc9c],
+    "Nebula Purple": [0x490092, 0x835a9b, 0xe6e6fa, 0x8e44ad],
+    "Cosmic Blue": [0x00171f, 0x16343a, 0xc6e2ff, 0x3498db],
+    "original": [0xB22222, 0xd3d3d3, 0xfff5ee, 0x333333]
 };
 
-let selectedColorPalette;
-let color; 
-
-function setColorFromPalette(){
-    const selectedPalette=document.getElementById('colorSelect');
+function setColorFromPalette() {
+    const selectedPalette = document.getElementById('colorSelect');
     if (!selectedPalette) {
         console.error("No color palette selected.");
         return;
@@ -35,7 +35,6 @@ function setColorFromPalette(){
         const rgb = hexToRgb(colorHex);
         color = new THREE.Color(rgb.r, rgb.g, rgb.b);
         lineMaterial.color.set(color);
-       
     }
 }
 
@@ -46,12 +45,31 @@ function applySettings() {
 
 document.getElementById("applySettings").addEventListener("click", applySettings);
 
+document.getElementById("saveSettings").addEventListener('click', function() {
+    // Save the selected theme
+    saveThemeSelection(selectedColorPalette);
+    window.location.reload(); // Reload the page
+});
 
 document.addEventListener("DOMContentLoaded", function() {
     // Wait for the DOM content to be fully loaded
     document.getElementById("applySettings").click(); // Programmatically trigger a click event on the button
-    console.log("Theme  Activated..................")
+    console.log("Theme Activated...");
+    const selectedTheme = loadThemeSelection();
+    if (selectedTheme) {
+        document.getElementById('colorSelect').value = selectedTheme;
+        applySettings();
+    }
+    console.log("Theme activated.");
 });
+
+function saveThemeSelection(theme) {
+    localStorage.setItem('selectedTheme', theme);
+}
+
+function loadThemeSelection() {
+    return localStorage.getItem('selectedTheme');
+}
 
 
 
@@ -67,7 +85,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 let lineMaterial = new THREE.LineBasicMaterial({
-    linewidth: 10,
+    linewidth: 30,
 });
 
 const lineGeometry1 =new THREE.BufferGeometry().setFromPoints([

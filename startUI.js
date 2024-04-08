@@ -269,10 +269,6 @@ function breakMesh(mesh) {
 
 
 
-
-
-
-
 function xno(){
     const xPosition = -10;
     const yPosition = 15;

@@ -17,7 +17,69 @@ let scoresData = {
     savedoScore: 0
 };
 
+let selectedColorPalette;
+let textColor;
 
+const colorMap = {
+    "Celestial Crimson": [0x811453, 0xbcd4e6, 0xfff5ee, 0x333333],
+    "Starlight Silver": [0x414e6d, 0x788995, 0xf5f5f5, 0x2c3e50],
+    "Galactic Teal": [0x034752, 0x3a5f6e, 0xe0f2f1, 0x1abc9c],
+    "Nebula Purple": [0x490092, 0x835a9b, 0xe6e6fa, 0x8e44ad],
+    "Cosmic Blue": [0x00171f, 0x16343a, 0xc6e2ff, 0x3498db],
+    "original": [0xB22222, 0xd3d3d3, 0xfff5ee, 0x333333]
+};
+
+function hexToRgb(hex) {
+    return {
+        r: ((hex >> 16) & 255) / 255,
+        g: ((hex >> 8) & 255) / 255,
+        b: (hex & 255) / 255
+    };
+}
+
+function setColorFromPalette() {
+    const selectedPalette = document.getElementById('colorSelect');
+    if (!selectedPalette) {
+        console.error("No color palette selected.");
+        return;
+    }
+    const paletteName = selectedPalette.value;
+    if (!(paletteName in colorMap)) {
+        console.error("Invalid color palette name:", paletteName);
+        return;
+    }
+    if (paletteName !== selectedColorPalette) {
+        selectedColorPalette = paletteName;
+        const colorHex = colorMap[paletteName][2];
+        const rgb = hexToRgb(colorHex);
+        textColor = new THREE.Color(rgb.r, rgb.g, rgb.b);
+        return textColor;
+    }
+}
+
+function applySettings() {
+    setColorFromPalette();
+    console.log("Settings applied.");
+    saveTextColorSelection(selectedColorPalette); // Save selected text color
+}
+
+document.getElementById("applySettings").addEventListener("click", applySettings);
+
+function saveTextColorSelection(color) {
+    localStorage.setItem('selectedTextColor', color);
+}
+
+function loadTextColorSelection() {
+    return localStorage.getItem('selectedTextColor');
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const selectedTextTheme = loadTextColorSelection();
+    if (selectedTextTheme) {
+        document.getElementById('colorSelect').value = selectedTextTheme;
+        applySettings(); // Apply settings automatically
+    }
+});
 
 
 /*
@@ -228,9 +290,9 @@ function handleContextMenu() {
 function addText(position, textValue) {
     const loader = new THREE.FontLoader();
     loader.load('./helvetiker_bold.typeface.json', function (loadedFont) {
-        const color = 0x006699;
+        
         const matLite = new THREE.MeshBasicMaterial({
-            color: color,
+            color: textColor,
             transparent: false,
             opacity: 1,
             side: THREE.DoubleSide
@@ -285,12 +347,6 @@ function addText(position, textValue) {
 //currentpossible contains all positions and the last posiition all postition are accessable...
 //allclickedpos contains the number[location] of the clicked sqaure and clicked text,,,
 // divided aray consists of allclicked positions divided by 3!!!!
-
-
-
-
-
-
 
   let xTextMesh = null;
   let oTextMesh = null;
@@ -619,11 +675,11 @@ function saveAddedTextToLocalStorage() {
 
 
 
-function addTextToScene(position, textValue, rotation, color = 0x006699, size = 0.38) {
+function addTextToScene(position, textValue, rotation, color = textColor, size = 0.38) {
     const loader = new THREE.FontLoader();
     loader.load('./helvetiker_bold.typeface.json', function (loadedFont) {
         const matLite = new THREE.MeshBasicMaterial({
-            color: color, 
+            color: textColor, 
             transparent: false,
             opacity: 1,
             side: THREE.DoubleSide
@@ -701,7 +757,7 @@ window.addEventListener('load', function() {
 
 
 document.getElementById("saveSettings").addEventListener('click', function() {
-
+    saveTextColorSelection();
         saveAddedTextToLocalStorage();
         saveScoresToLocalStorage();
     
@@ -723,4 +779,6 @@ document.getElementById("deleteSettings").addEventListener('click', function() {
 
 
 
+
+////
 
