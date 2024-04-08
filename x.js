@@ -81,35 +81,61 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-
-/*
 const audioContext = new AudioContext();
-const soundURL = './mixkit-negative.wav'; 
-let soundBuffer;
+let soundBuffer, soundSource, gainNode, isSoundEnabled;
 
-fetch(soundURL)
+fetch('./mixkit-negative.wav')
   .then(response => response.arrayBuffer())
   .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
   .then(decodedBuffer => {
     soundBuffer = decodedBuffer;
+    isSoundEnabled = localStorage.getItem("isSoundEnabled2") === "true";
+    document.getElementById("toggleSoundCheckbox").checked = isSoundEnabled;
+    if (isSoundEnabled) {
+      playSound(); 
+    }
   })
   .catch(error => console.error('Error loading sound file:', error));
 
-// Function to play the sound
-function playSound(count) {
-    if (!soundBuffer) {
-      console.error('Sound buffer not loaded');
-      return;
-    }
-  
-    for (let i = 0; i < count; i++) {
-      const source = audioContext.createBufferSource();
-      source.buffer = soundBuffer;
-      source.connect(audioContext.destination);
-      source.start();
-    }
+function toggleSound() {
+  isSoundEnabled = !isSoundEnabled;
+  if (!isSoundEnabled) { 
+    stopSound();
   }
-*/
+  else {
+    playSound();
+  }
+  localStorage.setItem("isSoundEnabled2", isSoundEnabled);
+}
+
+document.getElementById("toggleSoundCheckbox").addEventListener("change", toggleSound);
+
+function playSound() {
+  if (soundBuffer && isSoundEnabled) {
+    soundSource = audioContext.createBufferSource();
+    soundSource.buffer = soundBuffer;
+    gainNode = audioContext.createGain();
+    soundSource.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    soundSource.start();
+  }
+}
+
+function stopSound() {
+  if (soundSource) {
+    soundSource.stop();
+  }
+}
+
+document.getElementById("saveSettings").addEventListener("click", saveSettings);
+
+function saveSettings() {
+  localStorage.setItem("isSoundEnabled2", isSoundEnabled);
+  alert("Settings saved successfully!");
+}
+
+
+
 
 const textpositions= [
     new THREE.Vector3(-0.94, -0.94, -1.2), // 1

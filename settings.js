@@ -9,13 +9,13 @@ let isSettingsOpen = false;
 settingsButton.addEventListener("click", toggleSettings);
 closeButton.addEventListener("click", closeSettings);
 document.addEventListener("keydown", handleKeyPress);
-volumeInput.addEventListener("input", updateVolume);
+
 
 function toggleSettings() {
     isSettingsOpen = !isSettingsOpen;
     if (isSettingsOpen) {
         openSettings();
-        stopgame();
+
     } else {
         closeSettings();
         applySettings();
@@ -25,8 +25,7 @@ function toggleSettings() {
 function openSettings() {
     modal.style.display = "block";
     const overlay = document.getElementById("overlay");
-    overlay.style.display = "block";
-    stopgame();
+
 }
 
 function closeSettings() {
@@ -45,4 +44,11 @@ function handleKeyPress(event) {
 
 function updateVolume() {
     const volume = volumeInput.value / 100;
-    sound.setVolume(volume);}
+    const sources = document.querySelectorAll("audio");
+    sources.forEach(source => {
+        const gainNode = audioContext.createGain();
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        gainNode.gain.value = volume;
+    });
+}

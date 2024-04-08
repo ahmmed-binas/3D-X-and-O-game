@@ -12,7 +12,6 @@ document.querySelector('#renderer-container').appendChild(renderer.domElement);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.autoRotate = false;
 
-// Matter.js setup
 const engine = Matter.Engine.create();
 const render = Matter.Render.create({
     element: document.body,
@@ -21,14 +20,14 @@ const render = Matter.Render.create({
 Matter.Render.run(render);
 Matter.Runner.run(engine); 
 
-// Cube
+
 const cubeSize = 2.28;
 const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
 const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0x44aa88 });
 const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 scene.add(cube);
 
-// Ground
+//ground
 
 const ground = Matter.Bodies.rectangle(9, -8, 800, 2, { isStatic: true });
 Matter.World.add(engine.world, [ground]);

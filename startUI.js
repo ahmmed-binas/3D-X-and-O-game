@@ -9,6 +9,61 @@ function startGame() {
 
     }, delay);
 }
+const audioContext = new AudioContext();
+let soundBuffer, soundSource, gainNode, isSoundEnabled;
+
+fetch('./space-ambience-56265.mp3')
+    .then(response => response.arrayBuffer())
+    .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer))
+    .then(decodedBuffer => {
+        soundBuffer = decodedBuffer;
+        isSoundEnabled = localStorage.getItem("isSoundEnabled") === "true";
+        document.getElementById("toggleSoundCheckbox2").checked = isSoundEnabled;
+        if (isSoundEnabled) {
+            playSound(); 
+        }
+    })
+    .catch(error => console.error('Error loading sound file:', error));
+
+function toggleSound() {
+    isSoundEnabled = !isSoundEnabled;
+    if (!isSoundEnabled) { 
+        stopSound();
+    }
+    else {
+        playSound();
+    }
+    localStorage.setItem("isSoundEnabled", isSoundEnabled);
+}
+
+document.getElementById("toggleSoundCheckbox2").addEventListener("change", toggleSound);
+
+function playSound() {
+    if (soundBuffer && isSoundEnabled) {
+        soundSource = audioContext.createBufferSource();
+        soundSource.buffer = soundBuffer;
+        gainNode = audioContext.createGain();
+        soundSource.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        soundSource.start();
+    }
+}
+
+function stopSound() {
+    if (soundSource) {
+        soundSource.stop();
+    }
+}
+
+document.getElementById("saveSettings").addEventListener("click", saveSettings);
+
+function saveSettings() {
+    localStorage.setItem("isSoundEnabled", isSoundEnabled);
+    alert("Settings saved successfully!");
+}
+
+
+
 
 const windowGeometry = new THREE.BoxGeometry(5, 5, 0);
 const windowMaterial = new THREE.MeshBasicMaterial({ color: 0x808080, transparent: true, opacity: 0.8 });
