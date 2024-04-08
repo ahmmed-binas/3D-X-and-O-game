@@ -32,7 +32,7 @@ This project was created by [Your Name] as a fun way to explore game development
 
 Special thanks to:
 - The creators of Three.js for providing an amazing library for 3D graphics in the browser.
-- [Name of music artist] for the awesome background music used in the game.
+- the awesome background music used in the game.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
