@@ -10,7 +10,7 @@ Do you remember playing tic-tac-toe (X and O) when you were bored growing up? We
 - Includes background music for added enjoyment.
 - saving the game
 - changing themes
-- ajusting volumes
+- adjusting volumes
 - and more suprising fun
 
 ## How to Play
