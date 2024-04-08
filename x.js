@@ -16,17 +16,16 @@ let scoresData = {
     savedxScore: 0,
     savedoScore: 0
 };
-
 let selectedColorPalette;
 let textColor;
 
 const colorMap = {
-    "Celestial Crimson": [0x811453, 0xbcd4e6, 0xfff5ee, 0x333333],
-    "Starlight Silver": [0x414e6d, 0x788995, 0xf5f5f5, 0x2c3e50],
-    "Galactic Teal": [0x034752, 0x3a5f6e, 0xe0f2f1, 0x1abc9c],
-    "Nebula Purple": [0x490092, 0x835a9b, 0xe6e6fa, 0x8e44ad],
-    "Cosmic Blue": [0x00171f, 0x16343a, 0xc6e2ff, 0x3498db],
-    "original": [0xB22222, 0xd3d3d3, 0xfff5ee, 0x333333]
+    "Celestial Crimson": [0x811453, 0xdd2f59, 0xffb98a],
+    "Starlight Silver": [0x414e6d, 0xaebdc7, 0xe9ecef],
+    "Galactic Teal": [0x034752, 0x0092a6, 0x23c5e0],
+    "Nebula Purple": [0x490092, 0x8700e8, 0xba80e8],
+    "Cosmic Blue": [0x00171f, 0x0a4f62, 0x00a4c4],
+    "original": [0xff0000, 0x00ff00, 0x0000ff]
 };
 
 function hexToRgb(hex) {
@@ -77,9 +76,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const selectedTextTheme = loadTextColorSelection();
     if (selectedTextTheme) {
         document.getElementById('colorSelect').value = selectedTextTheme;
-        applySettings(); 
+        applySettings();
     }
 });
+
 
 
 /*
