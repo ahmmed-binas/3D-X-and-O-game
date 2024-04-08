@@ -1,16 +1,27 @@
+ const colorMap = {
+    "Celestial Crimson": [0x811453, 0xbcd4e6, 0xfff5ee, 0x333333],
+    "Starlight Silver": [0x414e6d, 0x788995, 0xf5f5f5, 0x2c3e50],
+    "Galactic Teal": [0x034752, 0x3a5f6e, 0xe0f2f1, 0x1abc9c],
+    "Nebula Purple": [0x490092, 0x835a9b, 0xe6e6fa, 0x8e44ad],
+    "Cosmic Blue": [0x00171f, 0x16343a, 0xc6e2ff, 0x3498db],
+    "original": [0x800000, 0xd3d3d3, 0xfff5ee, 0x333333]
+};
+
+
+  function hexToRgb(hex) {
+    return {
+        r: ((hex >> 16) & 255) / 255,
+        g: ((hex >> 8) & 255) / 255,
+        b: (hex & 255) / 255
+    };
+}
+
 let selectedColorPalette;
 let color; 
 let squares = [];
 
 let squareMaterial = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
 
-function hexToRgb(hex) {
-    return {
-        r: ((hex >> 16) & 255) / 255, 
-        g: ((hex >> 8) & 255) / 255, 
-        b: (hex & 255) / 255         
-    };
-}
 
 function saveThemeSelection(theme) {
     localStorage.setItem('selectedTheme', theme);
@@ -20,14 +31,7 @@ function loadThemeSelection() {
     return localStorage.getItem('selectedTheme');
 }
 
-const colorMap = {
-    "Celestial Crimson": [0x811453, 0xbcd4e6, 0xfff5ee, 0x333333],
-    "Starlight Silver": [0x414e6d, 0x788995, 0xf5f5f5, 0x2c3e50],
-    "Galactic Teal": [0x034752, 0x3a5f6e, 0xe0f2f1, 0x1abc9c],
-    "Nebula Purple": [0x490092, 0x835a9b, 0xe6e6fa, 0x8e44ad],
-    "Cosmic Blue": [0x00171f, 0x16343a, 0xc6e2ff, 0x3498db],
-    "original": [0xB22222, 0xd3d3d3, 0xfff5ee, 0x333333]
-};
+
 
 function setColorFromPalette() {
     const selectedPalette = document.getElementById('colorSelect');
@@ -132,11 +136,11 @@ function create_squares() {
         new THREE.Vector3(0.76, -1.16, 0.76)      // square54
     ];
 
-    const squarenumb = squarePositions.length; // Get the total number of squares
+    const squarenumb = squarePositions.length; 
     for (let i = 1; i <= squarenumb; i++) {
         const square = new THREE.Mesh(squareGeometry, squareMaterial); 
-        square.position.copy(squarePositions[i - 1]); // Set the position of the square
-        square.name = "square" + i; // Assign a name to the square
+        square.position.copy(squarePositions[i - 1]); 
+        square.name = "square" + i;
         scene.add(square); 
         squares.push(square);
     }

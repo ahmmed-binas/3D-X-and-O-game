@@ -2,7 +2,7 @@ const scene = new THREE.Scene();
 const width = window.innerWidth;
 const height = window.innerHeight;
 const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-camera.position.z = -6;
+camera.position.z = 6;
 
 
 const renderer = new THREE.WebGLRenderer();
@@ -55,8 +55,6 @@ window.addEventListener('resize', function () {
 function animate() {
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
-    xno();
-    updateFragments()
 }
 
 animate();

@@ -1,5 +1,5 @@
 let intersectedIndex=-1;
-let game=true;
+import { game } from "/startUI.js";
 let all_clicked_pos=[];
 let TextXO=[]
 let addedtext=[]
@@ -60,7 +60,7 @@ function setColorFromPalette() {
 function applySettings() {
     setColorFromPalette();
     console.log("Settings applied.");
-    saveTextColorSelection(selectedColorPalette); // Save selected text color
+    saveTextColorSelection(selectedColorPalette); 
 }
 
 document.getElementById("applySettings").addEventListener("click", applySettings);
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const selectedTextTheme = loadTextColorSelection();
     if (selectedTextTheme) {
         document.getElementById('colorSelect').value = selectedTextTheme;
-        applySettings(); // Apply settings automatically
+        applySettings(); 
     }
 });
 
@@ -781,4 +781,3 @@ document.getElementById("deleteSettings").addEventListener('click', function() {
 
 
 ////
-

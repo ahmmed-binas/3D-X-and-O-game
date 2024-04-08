@@ -1,5 +1,14 @@
 # XO-Game-Three.js
 
+
+![Settings Screenshot](pics/settings.PNG)
+![Screenshot 1](pics/Screenshot%202024-04-08%20205604.jpg)
+![Screenshot 2](pics/Screenshot%202024-04-08%20205547.jpg)
+![Screenshot 3](pics/Screenshot%202024-04-08%20205410.jpg)
+![Capture](pics/Capture.PNG)
+![Image 1](pics/3.PNG)
+![Image 2](pics/2.PNG)
+
 ## Introduction
 Do you remember playing tic-tac-toe (X and O) when you were bored growing up? Well, imagine taking that classic game to a whole new level of fun with Three.js! This project implements the X and O game in JavaScript using Three.js, adding a 3D experience, physics, and even some music. Get ready to enjoy a modern twist on a timeless game!
 
